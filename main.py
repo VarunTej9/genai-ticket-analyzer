@@ -2,6 +2,7 @@
 import os
 from typing import Literal
 
+from routing import route_ticket
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -64,16 +65,30 @@ def analyze_ticket(ticket: str) -> TicketResult:
     )
 
 
-# Main program
+
+# Step 5: Accept customer complaint
 ticket = input("Enter customer complaint: ").strip()
 
 if ticket:
+    # Analyze using Gemini
     result = analyze_ticket(ticket)
 
+    # Route ticket using Python
+    ticket_id, department, escalation = route_ticket(
+        result.category,
+        result.priority
+    )
+
+    # Display results
     print("\n--- AI TICKET ANALYSIS ---")
+    print("Ticket ID:", ticket_id)
     print("Category:", result.category)
     print("Priority:", result.priority)
+    print("Department:", department)
+    print("Human Escalation:", escalation)
     print("Summary:", result.summary)
-    print("Reply:", result.reply)
+    print("Suggested Reply:", result.reply)
+
 else:
     print("Please enter a complaint.")
+
